@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    /> -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <!-- <script src="./node_modules/amfe-flexible/index.js"></script> -->
+    <title>HelloWorld</title>
+    <!-- <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    /> -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/vant@2.9/lib/index.css"
+    />
+    <link rel="stylesheet" href="./base.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.9/lib/vant.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- <common-head></common-head> -->
+      <!-- <router-link to="/a">lee</router-link>
+      <router-link to="/b">lee1</router-link> -->
+      <router-view></router-view>
+    </div>
+    <template id="pickdate">
+      <div style="height: 100%;">
+        <header style="position: relative;">
+          <img
+            src="./pic/81bc040d216c1f8dc307189a8b09738.png"
+            style="width: 100%; height: 3.6rem;"
+            alt=""
+          />
+          <div
+            style="
+              position: absolute;
+              width: 5.3rem;
+              top: 3.3rem;
+              box-shadow: 0px 0px 0.1rem #b4bccc;
+              left: 50%;
+              transform: translateX(-50%);
+              background: white;
+            "
+          >
+            <div
+              class="timepick"
+              style="
+                height: 1.2rem;
+                width: 5.3rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+              @click="datechange"
+            >
+              <p
+                style="
+                  color: #e32b31;
+                  width: 100%;
+                  font-weight: bold;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  position: relative;
+                "
+              >
+                <img
+                  src="./pic/_.png"
+                  style="height: 0.24rem; position: absolute; left: 0.4rem;"
+                  alt=""
+                />
+                <span> {{timeValue}}</span>
+                <img
+                  src="./pic/_.png"
+                  style="
+                    height: 0.24rem;
+                    transform: rotate(180deg);
+                    position: absolute;
+                    right: 0.4rem;
+                  "
+                  alt=""
+                />
+              </p>
+            </div>
+            <!-- <van-datetime-picker
+              @confirm="confirmdate"
+              @cancel="datechange"
+              v-show="datepick"
+              v-model="currentDate"
+              type="date"
+              title=""
+              :min-date="minDate"
+              :max-date="maxDate"
+            ></van-datetime-picker> -->
+          </div>
+          <van-calendar v-model="datepick" @confirm="confirmdate" />
+        </header>
+        <div style="margin-bottom: 0.25rem;">
+          <img
+            src="./pic/banner.png"
+            style="width: 100%; height: 0.42rem;"
+            alt=""
+          />
+        </div>
+        <ul style="margin: 0 auto; width: 5.3rem; margin-bottom: 0.7rem;">
+          <li
+            v-for="(item,idx) in timeline"
+            :key="idx"
+            @click="pickPeriod(item.isok)"
+            class="timeperiod"
+            :class="{grey:!item.isok}"
+          >
+            <p>
+              <span>{{item.start}}</span><span>AM</span>
+              <span>-</span>
+              <span>{{item.end}}</span><span>pm</span>
+            </p>
+          </li>
+        </ul>
+        <p
+          style="
+            margin: 0 auto;
+            width: 5.7rem;
+            border-bottom: 1px solid #bcbcbc;
+          "
+        ></p>
+        <p
+          style="
+            margin: 0 auto;
+            padding: 0.7rem 0;
+            width: 5.3rem;
+            color: #e32b31;
+            font-size: 0.18rem;
+            line-height: 0.28rem;
+          "
+        >
+          * Offers are subject to change at the discretion of Tomato Beans
+          Creations Limited. without prior notice. Tomato Beans Creations
+          Limited reserve the right of final decision when dispute arise
+        </p>
+        <!-- <van-datetime-picker
+          v-model="currentDate"
+          type="date"
+          title="choose"
+          :min-date="minDate"
+          :max-date="maxDate"
+        ></van-datetime-picker> -->
+      </div>
+    </template>
+    <template id="FillOutForm">
+      <div id="FillOutForm" style="height: 100%;">
+        <header style="position: relative;">
+          <img
+            src="./pic/81bc040d216c1f8dc307189a8b09738.png"
+            style="width: 100%; height: 3.6rem;"
+            alt=""
+          />
+          <div
+            style="
+              position: absolute;
+              width: 5.3rem;
+              top: 3.3rem;
+              box-shadow: 0px 0px 0.1rem #b4bccc;
+              left: 50%;
+              transform: translateX(-50%);
+              background: white;
+            "
+          >
+            <div
+              class="timepick"
+              style="
+                height: 1.2rem;
+                width: 5.3rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <p
+                style="
+                  color: #e32b31;
+                  width: 100%;
+                  font-weight: bold;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  position: relative;
+                "
+              >
+                <img
+                  src="./pic/_.png"
+                  style="height: 0.24rem; position: absolute; left: 0.4rem;"
+                  alt=""
+                  @click="goback"
+                />
+
+                <span>BOOKING DETAILS</span>
+              </p>
+            </div>
+          </div>
+        </header>
+        <div
+          style="
+            margin: 0 auto;
+            width: 5.7rem;
+            height: 1px;
+            background: rgb(188, 188, 188);
+          "
+        >
+          <!-- <img
+            src="./pic/banner.png"
+            style="width: 100%; height: 0.42rem;"
+            alt=""
+          /> -->
+        </div>
+        <div style="margin: 0 auto;">
+          <van-form @submit="onSubmit">
+            <van-field
+              v-model="Name"
+              name="Name"
+              label="Name"
+              placeholder="Enter your name"
+              :rules="[{ required: true, message: 'Please enter' }]"
+            ></van-field>
+            <van-field
+              v-model="Email"
+              name="E-mail"
+              label="E-mail"
+              placeholder="Enter your E-mail"
+              :rules="[{ validator, message:reminder}]"
+            ></van-field>
+            <van-field
+              v-model="phone"
+              type="tel"
+              name="phone"
+              label="phone number"
+              placeholder="Enter your phone number"
+              :rules="[{ required: true, message: 'Please enter'   }]"
+            ></van-field>
+            <div style="margin: 16px;">
+              <van-button round block type="info" native-type="submit">
+                Submit
+              </van-button>
+            </div>
+          </van-form>
+        </div>
+
+        <p
+          style="
+            margin: 0 auto;
+            width: 5.7rem;
+            border-bottom: 1px solid #bcbcbc;
+          "
+        ></p>
+        <p
+          style="
+            margin: 0 auto;
+            padding: 0.7rem 0;
+            width: 5.3rem;
+            color: #e32b31;
+            font-size: 0.18rem;
+            line-height: 0.28rem;
+          "
+        >
+          * Offers are subject to change at the discretion of Tomato Beans
+          Creations Limited. without prior notice. Tomato Beans Creations
+          Limited reserve the right of final decision when dispute arise
+        </p>
+      </div>
+    </template>
+
+    <script>
+      var emailreg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+      const dayAbbreviation = ["S", "M", "T", "W", "T", "F", "S"];
+      const dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const monthList = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const monthLongList = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      //  let enUS= require('vant/lib/locale/lang/en-US') ;
+      //   console.log(enUS);
+      const enjs = {
+        name: "Name",
+        tel: "Phone",
+        save: "Save",
+        confirm: "Confirm",
+        cancel: "Cancel",
+        delete: "Delete",
+        complete: "Complete",
+        loading: "Loading...",
+        telEmpty: "Please fill in the tel",
+        nameEmpty: "Please fill in the name",
+        nameInvalid: "Malformed name",
+        confirmDelete: "Are you sure you want to delete?",
+        telInvalid: "Malformed phone number",
+        vanCalendar: {
+          end: "End",
+          start: "Start",
+          title: "Calendar",
+          startEnd: "Start/End",
+          weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          monthTitle: (year, month) => `${year}/${month}`,
+          rangePrompt: (maxRange) => `Choose no more than ${maxRange} days`,
+        },
+        vanContactCard: {
+          addText: "Add contact info",
+        },
+        vanContactList: {
+          addText: "Add new contact",
+        },
+        vanPagination: {
+          prev: "Previous",
+          next: "Next",
+        },
+        vanPullRefresh: {
+          pulling: "Pull to refresh...",
+          loosing: "Loose to refresh...",
+        },
+        vanSubmitBar: {
+          label: "Total：",
+        },
+        vanCoupon: {
+          unlimited: "Unlimited",
+          discount: (discount) => `${discount * 10}% off`,
+          condition: (condition) => `At least ${condition}`,
+        },
+        vanCouponCell: {
+          title: "Coupon",
+          tips: "No coupons",
+          count: (count) => `You have ${count} coupons`,
+        },
+        vanCouponList: {
+          empty: "No coupons",
+          exchange: "Exchange",
+          close: "Close",
+          enable: "Available",
+          disabled: "Unavailable",
+          placeholder: "Coupon code",
+        },
+        vanAddressEdit: {
+          area: "Area",
+          postal: "Postal",
+          areaEmpty: "Please select a receiving area",
+          addressEmpty: "Address can not be empty",
+          postalEmpty: "Wrong postal code",
+          defaultAddress: "Set as the default address",
+          telPlaceholder: "Phone",
+          namePlaceholder: "Name",
+          areaPlaceholder: "Area",
+        },
+        vanAddressEditDetail: {
+          label: "Address",
+          placeholder: "Address",
+        },
+        vanAddressList: {
+          add: "Add new address",
+        },
+      };
+      vant.Locale.use("en-US", enjs);
+      (function (designWidth, maxWidth) {
+        var doc = document,
+          win = window,
+          docEl = doc.documentElement,
+          remStyle = document.createElement("style"),
+          tid;
+        // console.log(docEl);
+
+        function refreshRem() {
+          var width = docEl.getBoundingClientRect().width;
+          maxWidth = maxWidth || 540;
+          width > maxWidth && (width = maxWidth);
+          var rem = (width * 100) / designWidth;
+          console.log(rem);
+
+          remStyle.innerHTML = "html{font-size:" + rem + "px !important;}";
+        }
+
+        if (docEl.firstElementChild) {
+          docEl.firstElementChild.appendChild(remStyle);
+          // console.log(docEl);
+        } else {
+          var wrap = doc.createElement("div");
+          wrap.appendChild(remStyle);
+          doc.write(wrap.innerHTML);
+          wrap = null;
+        }
+        //要等 wiewport 设置好后才能执行 refreshRem，不然 refreshRem 会执行2次；
+        refreshRem();
+
+        win.addEventListener(
+          "resize",
+          function () {
+            clearTimeout(tid); //防止执行两次
+            tid = setTimeout(refreshRem, 300);
+          },
+          false
+        );
+
+        win.addEventListener(
+          "pageshow",
+          function (e) {
+            if (e.persisted) {
+              // 浏览器后退的时候重新计算
+              clearTimeout(tid);
+              tid = setTimeout(refreshRem, 300);
+            }
+          },
+          false
+        );
+
+        if (doc.readyState === "complete") {
+          doc.body.style.fontSize = "16px";
+        } else {
+          doc.addEventListener(
+            "DOMContentLoaded",
+            function (e) {
+              doc.body.style.fontSize = "16px";
+            },
+            false
+          );
+        }
+      })(640, 1366);
+
+      var a = Vue.component("pickdate", {
+        template: "#pickdate",
+        data: function () {
+          return {
+            datepick: false,
+            timeValue: null,
+            minDate: new Date(2020, 0, 1),
+            maxDate: new Date(2025, 10, 1),
+            timeline: [
+              {
+                start: "09:00",
+                end: "11:00",
+                isok: true,
+              },
+              {
+                start: "09:00",
+                end: "11:00",
+                isok: true,
+              },
+              {
+                start: "09:00",
+                end: "11:00",
+                isok: true,
+              },
+              {
+                start: "09:00",
+                end: "11:00",
+                isok: false,
+              },
+              {
+                start: "09:00",
+                end: "11:00",
+                isok: true,
+              },
+            ],
+            currentDate: new Date(),
+          };
+        },
+        mounted() {
+          let val = new Date();
+          let year = val.getFullYear();
+          let month = val.getMonth() + 1;
+          let day = val.getDate();
+          let date = dayList[val.getDay()];
+          if (month >= 1 && month <= 9) {
+            month = `0${month}`;
+          }
+          if (day >= 1 && day <= 9) {
+            day = `0${day}`;
+          }
+          this.timeValue = `${date},${year}-${month}-${day}`;
+        },
+        methods: {
+          pickPeriod(isok) {
+            // console.log(isok);
+            if (isok) {
+              this.$router.push({
+                name: "b",
+                query: { time: 123 },
+              });
+            }
+          },
+          datechange() {
+            this.datepick = !this.datepick;
+          },
+          confirmdate(val) {
+            let year = val.getFullYear();
+            let month = val.getMonth() + 1;
+            let day = val.getDate();
+            let date = dayList[val.getDay()];
+            if (month >= 1 && month <= 9) {
+              month = `0${month}`;
+            }
+            if (day >= 1 && day <= 9) {
+              day = `0${day}`;
+            }
+            this.timeValue = `${date},${year}-${month}-${day}`;
+            this.datepick = false;
+          },
+        },
+      });
+      var b = Vue.component("FillOutForm", {
+        template: "#FillOutForm",
+        data: function () {
+          return {
+            Name: "",
+            phone: "",
+            Email: "",
+          };
+        },
+        mounted() {},
+        methods: {
+          reminder(value, rule) {
+            console.log(value);
+
+            if (!value) {
+              return "Please enter";
+            } else return "Format";
+          },
+          validator(val) {
+            if (!val) {
+              return false;
+            } else if (val) {
+              return emailreg.test(val);
+            }
+          },
+          goback() {
+            this.$router.push({
+              name: "a",
+              // query: obj
+            });
+          },
+          onSubmit(values) {
+            console.log("submit", values);
+          },
+        },
+      });
+
+      var routes = [
+        {
+          path: "/",
+          component: a,
+        },
+        {
+          path: "/a",
+          name: "a",
+          component: a,
+        },
+        {
+          path: "/b",
+          name: "b",
+          component: b,
+        },
+        // {
+        //  path: '/lee1',
+        //  component: b,
+        //  children: [
+        //   {
+        //    path: '',
+        //    component: s
+        //   },
+        //   {
+        //    path: 'c',//注意二级路由是不需要加/的
+        //    component:c
+        //   }
+        //  ]
+        // }
+      ];
+      // console.log(pickdater);
+
+      var router = new VueRouter({
+        // mode:'history',
+        routes,
+      });
+      var testVue = new Vue({
+        el: "#app",
+        router,
+        data() {
+          return {};
+        },
+        watch: {
+          $route: function (to, from) {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+          },
+        },
+      });
+
+      // function formatter_upload_img(value) {
+      //   console.log("########formatter_upload_img");
+      //   console.log(value);
+      //   // console.log(scope.row)
+      //   //return row.date == "2016-05-04" ? '男' : row.sex == 0 ? '女' : '未知';
+      //   //格式化是针对表格内容即使data数据
+      //   // var newDate = row.date== "" ? "-" : row.date.replace(/-/g,"/")
+      //   // return newDate
+      // }
+    </script>
+
+    <style>
+
+      #app {
+        width: 100%;
+        height: 100%;
+        font-size: 0.26rem;
+        /* background: black; */
+      }
+      .van-cell {
+        /* font-size: 0.26rem; */
+      }
+      header {
+        height: 4.8rem;
+      }
+      .timeperiod {
+        width: 100%;
+        height: 1.2rem;
+        background: #e32b31;
+        margin-bottom: 1px;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .grey {
+        background: #dfdfdf;
+      }
+      #FillOutForm .van-button--info {
+        background-color: #ee0a24;
+        border: 1px solid #ee0a24;
+      }
+      .my-swipe .van-swipe-item {
+        /* color: #fff;
+        font-size: 20px;
+        line-height: 150px;
+        text-align: center;
+        background-color: #39a9ed; */
+      }
+    </style>
+  </body>
+</html>
