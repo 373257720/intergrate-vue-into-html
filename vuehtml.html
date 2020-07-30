@@ -10,36 +10,57 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
     />
-    <!-- <script src="./node_modules/amfe-flexible/index.js"></script> -->
-    <title>HelloWorld</title>
-    <!-- <link
-      rel="stylesheet"
-      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
-    /> -->
+    <title>MZ JJ VIP Private Sale SS2020</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/vant@2.9/lib/index.css"
     />
+    <link href="http://www.mzjj.co.kr/image/catalog/xmzjj_logo_300x300.jpg.pagespeed.ic.NmvTA0QDqo.webp" rel="icon"/>
     <link rel="stylesheet" href="./base.css" />
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vant@2.9/lib/vant.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
   </head>
   <body>
     <div id="app">
-      <!-- <common-head></common-head> -->
-      <!-- <router-link to="/a">lee</router-link>
-      <router-link to="/b">lee1</router-link> -->
-      <router-view></router-view>
-    </div>
-    <template id="pickdate">
+      <van-overlay
+        :show="isShowLoading"
+        :custom-style="{
+            background: 'rgb(255, 255, 255, 0.6)',
+            display: 'flex',
+            opacity:'0.8',
+            justifyContent: 'center',
+        }"
+      >
+        <van-loading color="rgb(227, 43, 49)"> </van-loading>
+      </van-overlay>
       <div style="height: 100%;">
-        <header style="position: relative;">
+        <div
+        v-show="ishome"
+          style="width: 100%; height: 3.6rem; position: absolute; top: 0;"
+        >
           <img
-            src="./pic/81bc040d216c1f8dc307189a8b09738.png"
-            style="width: 100%; height: 3.6rem;"
+            src="./pic/poster.png"
+            style="width: 100%; height: 100%;"
             alt=""
           />
+        </div>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </div>
+    </div>
+    <template id="homepage">
+      <div class="homepage" style="width: 100%; height: 100%;position: relative;">
+        <img src="./pic/home.jpg" style="width: 100%; height: 100%;" alt="" />
+        <img @click="goto" src="./pic/booknow.png" style="width: 1.98rem;height: 0.8rem; position:absolute;top:70%;left:50%;z-index: 1000;transform: translateX(-50%);" alt="">
+      </div>
+    </template>
+    <template id="pickdate">
+      <div class="pickdate" style="height: 100%;">
+        <header style="position: relative;">
           <div
             style="
               position: absolute;
@@ -74,13 +95,13 @@
                 "
               >
                 <img
-                  src="./pic/_.png"
+                  src="./pic/arrow.png"
                   style="height: 0.24rem; position: absolute; left: 0.4rem;"
                   alt=""
                 />
                 <span> {{timeValue}}</span>
                 <img
-                  src="./pic/_.png"
+                  src="./pic/arrow.png"
                   style="
                     height: 0.24rem;
                     transform: rotate(180deg);
@@ -92,17 +113,22 @@
               </p>
             </div>
             <!-- <van-datetime-picker
-              @confirm="confirmdate"
-              @cancel="datechange"
-              v-show="datepick"
-              v-model="currentDate"
-              type="date"
-              title=""
-              :min-date="minDate"
-              :max-date="maxDate"
-            ></van-datetime-picker> -->
+            @confirm="confirmdate"
+            @cancel="datechange"
+            v-show="datepick"
+            v-model="currentDate"
+            type="date"
+            title=""
+            :min-date="minDate"
+            :max-date="maxDate"
+          ></van-datetime-picker> -->
           </div>
-          <van-calendar v-model="datepick" @confirm="confirmdate" />
+          <van-calendar
+            v-model="datepick"
+            :min-date="minDate"
+            :max-date="maxDate"
+            @confirm="confirmdate"
+          />
         </header>
         <div style="margin-bottom: 0.25rem;">
           <img
@@ -115,14 +141,14 @@
           <li
             v-for="(item,idx) in timeline"
             :key="idx"
-            @click="pickPeriod(item.isok)"
+            @click="pickPeriod(item.book_status,item.set_id)"
             class="timeperiod"
-            :class="{grey:!item.isok}"
+            :class="{grey:item.book_status}"
           >
             <p>
-              <span>{{item.start}}</span><span>AM</span>
+              <span>{{item.time_start}}</span>
               <span>-</span>
-              <span>{{item.end}}</span><span>pm</span>
+              <span>{{item.time_end}}</span>
             </p>
           </li>
         </ul>
@@ -139,7 +165,7 @@
             padding: 0.7rem 0;
             width: 5.3rem;
             color: #e32b31;
-            font-size: 0.18rem;
+            font-size: 0.22rem;
             line-height: 0.28rem;
           "
         >
@@ -148,22 +174,17 @@
           Limited reserve the right of final decision when dispute arise
         </p>
         <!-- <van-datetime-picker
-          v-model="currentDate"
-          type="date"
-          title="choose"
-          :min-date="minDate"
-          :max-date="maxDate"
-        ></van-datetime-picker> -->
+        v-model="currentDate"
+        type="date"
+        title="choose"
+        :min-date="minDate"
+        :max-date="maxDate"
+      ></van-datetime-picker> -->
       </div>
     </template>
     <template id="FillOutForm">
-      <div id="FillOutForm" style="height: 100%;">
+      <div class="FillOutForm">
         <header style="position: relative;">
-          <img
-            src="./pic/81bc040d216c1f8dc307189a8b09738.png"
-            style="width: 100%; height: 3.6rem;"
-            alt=""
-          />
           <div
             style="
               position: absolute;
@@ -176,6 +197,7 @@
             "
           >
             <div
+              v-show="!successful"
               class="timepick"
               style="
                 height: 1.2rem;
@@ -197,12 +219,11 @@
                 "
               >
                 <img
-                  src="./pic/_.png"
+                  src="./pic/arrow.png"
                   style="height: 0.24rem; position: absolute; left: 0.4rem;"
                   alt=""
                   @click="goback"
                 />
-
                 <span>BOOKING DETAILS</span>
               </p>
             </div>
@@ -215,59 +236,86 @@
             height: 1px;
             background: rgb(188, 188, 188);
           "
+        ></div>
+        <div
+          v-show="!successful"
+          style="margin: 0 auto; margin-top: 0.16rem; width: 5.3rem;"
         >
-          <!-- <img
-            src="./pic/banner.png"
-            style="width: 100%; height: 0.42rem;"
-            alt=""
-          /> -->
-        </div>
-        <div style="margin: 0 auto;">
-          <van-form @submit="onSubmit">
+          <van-form ref="checkbox" @submit="onSubmit">
             <van-field
-              v-model="Name"
-              name="Name"
+              v-model="formdata.name"
               label="Name"
+              name="name"
               placeholder="Enter your name"
               :rules="[{ required: true, message: 'Please enter' }]"
             ></van-field>
             <van-field
-              v-model="Email"
-              name="E-mail"
+              v-model="formdata.email"
               label="E-mail"
+              name="email"
               placeholder="Enter your E-mail"
               :rules="[{ validator, message:reminder}]"
             ></van-field>
             <van-field
-              v-model="phone"
+              v-model="formdata.tel"
               type="tel"
-              name="phone"
+              name="tel"
               label="phone number"
               placeholder="Enter your phone number"
               :rules="[{ required: true, message: 'Please enter'   }]"
             ></van-field>
-            <div style="margin: 16px;">
+            <p
+              style="
+                height: 0.3rem;
+                line-height: 0.3rem;
+                padding: 0 0.16rem;
+                box-sizing: border-box;
+                width: 5.3rem;
+                color: #e32b31;
+                font-size: 0.26rem;
+              "
+            >
+              {{errorMsg}}
+            </p>
+            <div style="margin: 0.16rem;">
               <van-button round block type="info" native-type="submit">
                 Submit
               </van-button>
             </div>
           </van-form>
         </div>
-
-        <p
+        <div
+          v-show="successful"
           style="
             margin: 0 auto;
-            width: 5.7rem;
-            border-bottom: 1px solid #bcbcbc;
+            margin-top: 0.16rem;
+            width: 5.3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
           "
-        ></p>
+        >
+          <img
+            style="width: 1.58rem; height: 1.58rem; margin-bottom: 0.2rem;"
+            src="./pic/successful.png"
+            alt=""
+          />
+          <p style="font-size: 0.3rem; color: #6b6b6b; margin-bottom: 0.8rem;">
+            successful appointment!
+          </p>
+          <van-button round block type="info" @click="gohome">
+            Confirm
+          </van-button>
+        </div>
+
         <p
           style="
             margin: 0 auto;
             padding: 0.7rem 0;
             width: 5.3rem;
             color: #e32b31;
-            font-size: 0.18rem;
+            font-size: 0.22rem;
             line-height: 0.28rem;
           "
         >
@@ -279,6 +327,8 @@
     </template>
 
     <script>
+      let baseurl = "http://www.mzjj.co.kr/index.php";
+      // let baseurl = "http://192.168.1.22/index.php";
       var emailreg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
       const dayAbbreviation = ["S", "M", "T", "W", "T", "F", "S"];
       const dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -455,72 +505,60 @@
         }
       })(640, 1366);
 
-      var a = Vue.component("pickdate", {
+      const pickdate = Vue.component("pickdate", {
         template: "#pickdate",
         data: function () {
           return {
             datepick: false,
             timeValue: null,
-            minDate: new Date(2020, 0, 1),
-            maxDate: new Date(2025, 10, 1),
-            timeline: [
-              {
-                start: "09:00",
-                end: "11:00",
-                isok: true,
-              },
-              {
-                start: "09:00",
-                end: "11:00",
-                isok: true,
-              },
-              {
-                start: "09:00",
-                end: "11:00",
-                isok: true,
-              },
-              {
-                start: "09:00",
-                end: "11:00",
-                isok: false,
-              },
-              {
-                start: "09:00",
-                end: "11:00",
-                isok: true,
-              },
-            ],
-            currentDate: new Date(),
+            minDate: new Date(2020, 07, 05),
+            maxDate: new Date(2020, 07, 11),
+            timeline: [],
+            // currentDate: new Date(),
           };
         },
-        mounted() {
-          let val = new Date();
-          let year = val.getFullYear();
-          let month = val.getMonth() + 1;
-          let day = val.getDate();
-          let date = dayList[val.getDay()];
-          if (month >= 1 && month <= 9) {
-            month = `0${month}`;
-          }
-          if (day >= 1 && day <= 9) {
-            day = `0${day}`;
-          }
-          this.timeValue = `${date},${year}-${month}-${day}`;
+        created() {
+          let datestart = new Date("2020/08/05");
+          let datename = dayList[datestart.getDay()];
+          this.timeValue = `${datename},2020-08-05`;
+          this.initdata("2020-08-05");
         },
         methods: {
-          pickPeriod(isok) {
-            // console.log(isok);
-            if (isok) {
-              this.$router.push({
-                name: "b",
-                query: { time: 123 },
+          initdata(val) {
+            axios
+              .post(
+                `${baseurl}?route=rob/book/getDaySetting`,
+                Qs.stringify({ change_day: val }),
+                {
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                  },
+                }
+              )
+              .then((res) => {
+                console.log(res);
+                // resolve(res);
+                this.timeline = res.data.data;
+              })
+              .catch((err) => {
+                // console.log(err);
               });
+          },
+          pickPeriod(isok, idx) {
+            // console.log(isok);
+            if (!isok) {
+              this.$router.push({
+                name: "FillOutForm",
+                query: { set_id: idx },
+              });
+            } else {
             }
           },
           datechange() {
             this.datepick = !this.datepick;
           },
           confirmdate(val) {
+            this.datepick = false;
             let year = val.getFullYear();
             let month = val.getMonth() + 1;
             let day = val.getDate();
@@ -532,29 +570,42 @@
               day = `0${day}`;
             }
             this.timeValue = `${date},${year}-${month}-${day}`;
-            this.datepick = false;
+            let dat = `${year}-${month}-${day}`;
+
+            this.initdata(dat);
           },
         },
       });
-      var b = Vue.component("FillOutForm", {
+      const FillOutForm = Vue.component("FillOutForm", {
         template: "#FillOutForm",
         data: function () {
           return {
-            Name: "",
-            phone: "",
-            Email: "",
+            successful: false,
+            formdata: {
+              name: "",
+              tel: "",
+              email: "",
+            },
+            errorMsg: "",
+            set_id: null,
           };
+        },
+        created() {
+          this.set_id = parseInt(this.$route.query.set_id) || null;
         },
         mounted() {},
         methods: {
+          gohome(){
+            window.location.href="http://www.mzjj.co.kr/vueHtml/vuehtml.html#/homepage";
+          },
           reminder(value, rule) {
-            console.log(value);
-
+            console.log(1);
             if (!value) {
               return "Please enter";
-            } else return "Format";
+            } else return "Email Format is incorrect";
           },
           validator(val) {
+            this.errorMsg = "";
             if (!val) {
               return false;
             } else if (val) {
@@ -563,31 +614,86 @@
           },
           goback() {
             this.$router.push({
-              name: "a",
+              name: "pickdate",
               // query: obj
             });
           },
+          secSumbit(values) {
+            let obj = Object.assign({ set_id: this.set_id }, values);
+            console.log(obj);
+
+            axios
+              .post(`${baseurl}?route=rob/book/addBook`, Qs.stringify(obj))
+              .then((res) => {
+                if (res.data.ret === 0) {
+                  this.successful = true;
+                } else {
+                  this.errorMsg = res.data.msg;
+                }
+              });
+          },
           onSubmit(values) {
-            console.log("submit", values);
+            this.errorMsg = "";
+            //  let a=  this.$refs.checkbox.validateAll();
+            console.log(values);
+            axios
+              .post(
+                `${baseurl}?route=rob/book/checkTel`,
+                Qs.stringify({ tel: values.tel })
+              )
+              .then((res) => {
+                if (res.data.ret === 1) {
+                  this.errorMsg = "*Invalid VIP number,please re-enter";
+                  return;
+                } else if (res.data.ret === 0) {
+                  this.secSumbit(values);
+                }
+              });
           },
         },
       });
-
+      const homepage = Vue.component("homepage", {
+        template: "#homepage",
+        data: function () {
+          return {};
+        },
+        methods: {
+          goto() {
+            this.$router.push({
+              name: "pickdate",
+              // query: obj
+            });
+          },
+        },
+      });
       var routes = [
         {
           path: "/",
-          component: a,
+          redirect: {
+            name: "homepage",
+          },
         },
         {
-          path: "/a",
-          name: "a",
-          component: a,
+          path: "*",
+          // name: 'login',
+          component: homepage,
         },
         {
-          path: "/b",
-          name: "b",
-          component: b,
+          path: "/homepage",
+          name: "homepage",
+          component: homepage,
         },
+        {
+          path: "/pickdate",
+          name: "pickdate",
+          component: pickdate,
+        },
+        {
+          path: "/FillOutForm",
+          name: "FillOutForm",
+          component: FillOutForm,
+        },
+
         // {
         //  path: '/lee1',
         //  component: b,
@@ -613,7 +719,65 @@
         el: "#app",
         router,
         data() {
-          return {};
+          return {
+            loadingCount: 0,
+            isShowLoading: false,
+          };
+        },
+        computed: {
+          ishome: function () {
+            // console.log(this.$route);
+            if(this.$route.name=="pickdate" || this.$route.name=="FillOutForm"){
+                return 1;
+            }else{
+              return 0;
+            }
+          },
+        },
+        methods: {
+          addLoading() {
+            this.isShowLoading = true;
+            this.loadingCount++;
+          },
+
+          isCloseLoading() {
+            this.loadingCount--;
+            if (this.loadingCount === 0) {
+              this.isShowLoading = false;
+            }
+          },
+        },
+        created() {
+          let that = this;
+          axios.interceptors.request.use(
+            (config) => {
+              // console.log(`${this.$baseurl}/bsl_admin_web/user/adminLogin.do`)
+              // 在发送请求之前做些什么
+              that.addLoading();
+              return config;
+            },
+            function (error) {
+              // 对请求错误做些什么
+              that.isShowLoading = false;
+              that.loadingCount = 0;
+              return Promise.reject(error);
+            }
+          );
+          axios.interceptors.response.use(
+            (res) => {
+              that.isCloseLoading();
+              return res;
+              // if (res.data && res.data.resultCode) {
+              //   let code = res.data.resultCode;
+              //   return res;
+              // }
+            },
+            (error) => {
+              this.isShowLoading = false;
+              this.loadingCount = 0;
+              return Promise.reject(error);
+            }
+          );
         },
         watch: {
           $route: function (to, from) {
@@ -635,18 +799,76 @@
     </script>
 
     <style>
-
       #app {
         width: 100%;
         height: 100%;
         font-size: 0.26rem;
+        position: relative;
         /* background: black; */
+      }
+      .van-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 666;
+        color: #e32b31;
+        font-size: 0;
+
+        vertical-align: middle;
       }
       .van-cell {
         /* font-size: 0.26rem; */
       }
+      .pickdate .van-calendar__header-title {
+        font-size: 0.28rem;
+      }
+      .van-calendar__header-subtitle {
+        font-size: 0.24rem;
+      }
+      .van-calendar__header-subtitle,
+      .van-calendar__header-title,
+      .van-calendar__month-title {
+        height: 0.44rem;
+        font-weight: 500;
+        line-height: 0.44rem;
+        text-align: center;
+      }
+      .van-calendar__weekday {
+        font-size: 0.24rem;
+      }
+      .van-calendar__day {
+        font-size: 0.24rem;
+      }
+      .van-calendar__month-title {
+        font-size: 0.24rem;
+      }
+      .pickdate .van-calendar__confirm {
+        height: 0.6rem;
+        margin: 0.07rem 0;
+      }
+      .van-button--normal {
+        font-size: 0.28rem;
+        font-weight: bold;
+      }
       header {
         height: 4.8rem;
+      }
+      .FillOutForm .van-cell {
+        font-size: 0.26rem;
+        padding: 0.16rem;
+        box-sizing: border-box;
+        line-height: 0.38rem;
+      }
+      .FillOutForm .van-field__label {
+        font-weight: bold;
+      }
+      .FillOutForm .van-field__error-message {
+        font-size: 0.22rem;
+      }
+      .FillOutForm .van-button {
+        height: 0.6rem;
+        font-weight: bold;
       }
       .timeperiod {
         width: 100%;
@@ -661,9 +883,23 @@
       .grey {
         background: #dfdfdf;
       }
-      #FillOutForm .van-button--info {
-        background-color: #ee0a24;
-        border: 1px solid #ee0a24;
+      .FillOutForm .van-button--info {
+        background-color: #e32b31;
+        border: 1px solid #e32b31;
+      }
+      .van-overlay {
+        background: white;
+        opacity: 0.5;
+      }
+      .van-toast {
+        background: none;
+      }
+      .van-toast__loading {
+        color: #e32b31;
+      }
+      .van-loading__spinner {
+        height: 0.5rem;
+        width: 0.5rem;
       }
       .my-swipe .van-swipe-item {
         /* color: #fff;
