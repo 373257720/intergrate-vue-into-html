@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <title>MZ JJ VIP Private Sale SS2020</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/vant@2.9/lib/index.css"
+    />
+    <link
+      href="http://www.mzjj.co.kr/image/catalog/xmzjj_logo_300x300.jpg.pagespeed.ic.NmvTA0QDqo.webp"
+      rel="icon"
+    />
+    <link rel="stylesheet" href="./base.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.9/lib/vant.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/validator.tool/dist/validator.min.js"
+    ></script>
+    <script src="./filloutform.js"></script>
+    <script src="./pickdate.js"></script>
+    <script src="homepage.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    />
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <van-overlay
+        :show="isShowLoading"
+        :custom-style="{
+            background: 'rgb(255, 255, 255, 0.6)',
+            display: 'flex',
+            opacity:'0.8',
+            justifyContent: 'center',
+        }"
+      >
+        <van-loading color="rgb(227, 43, 49)"> </van-loading>
+      </van-overlay>
+      <div style="height: 100%;">
+        <div
+          v-show="ishome"
+          style="width: 100%; height: 3.6rem; position: absolute; top: 0;"
+        >
+          <img
+            src="./pic/poster.png"
+            style="width: 100%; height: 100%;"
+            alt=""
+          />
+        </div>
+        <router-view></router-view>
+      </div>
+    </div>
+    <template id="homepage">
+      <div
+      class="homepage"
+      style="width: 100%; height: 100%; position: relative;"
+    >
+      <img src="./pic/home.jpg" style="width: 100%; height: 100%;" alt="" />
+      <img
+        @click="goto"
+        src="./pic/booknow.png"
+        style="
+          width: 1.98rem;
+          height: 0.8rem;
+          position: absolute;
+          top: 70%;
+          left: 50%;
+          z-index: 1000;
+          transform: translateX(-50%);
+        "
+        alt=""
+      />
+    </div>
+    </template>
+    <!-- <template id="pickdate">
+ 
+    </template> -->
+
+
+    <script>
+      let baseurl = "http://www.mzjj.co.kr/index.php";
+      // let baseurl = "http://192.168.1.22/index.php";
+      var emailreg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+      const dayAbbreviation = ["S", "M", "T", "W", "T", "F", "S"];
+      const dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const monthList = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const monthLongList = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const enjs = {
+        name: "Name",
+        tel: "Phone",
+        save: "Save",
+        confirm: "Confirm",
+        cancel: "Cancel",
+        delete: "Delete",
+        complete: "Complete",
+        loading: "Loading...",
+        telEmpty: "Please fill in the tel",
+        nameEmpty: "Please fill in the name",
+        nameInvalid: "Malformed name",
+        confirmDelete: "Are you sure you want to delete?",
+        telInvalid: "Malformed phone number",
+        vanCalendar: {
+          end: "End",
+          start: "Start",
+          title: "Calendar",
+          startEnd: "Start/End",
+          weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          monthTitle: (year, month) => `${year}/${month}`,
+          rangePrompt: (maxRange) => `Choose no more than ${maxRange} days`,
+        },
+        vanContactCard: {
+          addText: "Add contact info",
+        },
+        vanContactList: {
+          addText: "Add new contact",
+        },
+        vanPagination: {
+          prev: "Previous",
+          next: "Next",
+        },
+        vanPullRefresh: {
+          pulling: "Pull to refresh...",
+          loosing: "Loose to refresh...",
+        },
+        vanSubmitBar: {
+          label: "Total：",
+        },
+        vanCoupon: {
+          unlimited: "Unlimited",
+          discount: (discount) => `${discount * 10}% off`,
+          condition: (condition) => `At least ${condition}`,
+        },
+        vanCouponCell: {
+          title: "Coupon",
+          tips: "No coupons",
+          count: (count) => `You have ${count} coupons`,
+        },
+        vanCouponList: {
+          empty: "No coupons",
+          exchange: "Exchange",
+          close: "Close",
+          enable: "Available",
+          disabled: "Unavailable",
+          placeholder: "Coupon code",
+        },
+        vanAddressEdit: {
+          area: "Area",
+          postal: "Postal",
+          areaEmpty: "Please select a receiving area",
+          addressEmpty: "Address can not be empty",
+          postalEmpty: "Wrong postal code",
+          defaultAddress: "Set as the default address",
+          telPlaceholder: "Phone",
+          namePlaceholder: "Name",
+          areaPlaceholder: "Area",
+        },
+        vanAddressEditDetail: {
+          label: "Address",
+          placeholder: "Address",
+        },
+        vanAddressList: {
+          add: "Add new address",
+        },
+      };
+      vant.Locale.use("en-US", enjs);
+      (function (designWidth, maxWidth) {
+        var doc = document,
+          win = window,
+          docEl = doc.documentElement,
+          remStyle = document.createElement("style"),
+          tid;
+        // console.log(docEl);
+
+        function refreshRem() {
+          var width = docEl.getBoundingClientRect().width;
+          maxWidth = maxWidth || 540;
+          width > maxWidth && (width = maxWidth);
+          var rem = (width * 100) / designWidth;
+          // console.log(rem);
+
+          remStyle.innerHTML = "html{font-size:" + rem + "px !important;}";
+        }
+
+        if (docEl.firstElementChild) {
+          docEl.firstElementChild.appendChild(remStyle);
+          // console.log(docEl);
+        } else {
+          var wrap = doc.createElement("div");
+          wrap.appendChild(remStyle);
+          doc.write(wrap.innerHTML);
+          wrap = null;
+        }
+        //要等 wiewport 设置好后才能执行 refreshRem，不然 refreshRem 会执行2次；
+        refreshRem();
+
+        win.addEventListener(
+          "resize",
+          function () {
+            clearTimeout(tid); //防止执行两次
+            tid = setTimeout(refreshRem, 300);
+          },
+          false
+        );
+
+        win.addEventListener(
+          "pageshow",
+          function (e) {
+            if (e.persisted) {
+              // 浏览器后退的时候重新计算
+              clearTimeout(tid);
+              tid = setTimeout(refreshRem, 300);
+            }
+          },
+          false
+        );
+
+        if (doc.readyState === "complete") {
+          doc.body.style.fontSize = "16px";
+        } else {
+          doc.addEventListener(
+            "DOMContentLoaded",
+            function (e) {
+              doc.body.style.fontSize = "16px";
+            },
+            false
+          );
+        }
+      })(640, 1366);
+
+
+      var routes = [
+        {
+          path: "/",
+          redirect: {
+            name: "homepage",
+          },
+        },
+        {
+          path: "*",
+          // name: 'login',
+          component: homepage,
+        },
+        {
+          path: "/homepage",
+          name: "homepage",
+          component: homepage,
+        },
+        {
+          path: "/pickdate",
+          name: "pickdate",
+          component: pickdate,
+        },
+        {
+          path: "/FillOutForm",
+          name: "FillOutForm",
+          component: FillOutForm,
+        },
+
+        // {
+        //  path: '/lee1',
+        //  component: b,
+        //  children: [
+        //   {
+        //    path: '',
+        //    component: s
+        //   },
+        //   {
+        //    path: 'c',//注意二级路由是不需要加/的
+        //    component:c
+        //   }
+        //  ]
+        // }
+      ];
+      var router = new VueRouter({
+        // mode:'history',
+        routes,
+      });
+      var testVue = new Vue({
+        el: "#app",
+        router,
+        data() {
+          return {
+            loadingCount: 0,
+            isShowLoading: false,
+          };
+        },
+        computed: {
+          ishome: function () {
+            // console.log(this.$route);
+            if (
+              this.$route.name == "pickdate" ||
+              this.$route.name == "FillOutForm"
+            ) {
+              return 1;
+            } else {
+              return 0;
+            }
+          },
+        },
+        methods: {
+          addLoading() {
+            this.isShowLoading = true;
+            this.loadingCount++;
+          },
+
+          isCloseLoading() {
+            this.loadingCount--;
+            if (this.loadingCount === 0) {
+              this.isShowLoading = false;
+            }
+          },
+        },
+        created() {
+          let that = this;
+          axios.interceptors.request.use(
+            (config) => {
+              // console.log(`${this.$baseurl}/bsl_admin_web/user/adminLogin.do`)
+              // 在发送请求之前做些什么
+              that.addLoading();
+              return config;
+            },
+            function (error) {
+              // 对请求错误做些什么
+              that.isShowLoading = false;
+              that.loadingCount = 0;
+              return Promise.reject(error);
+            }
+          );
+          axios.interceptors.response.use(
+            (res) => {
+              that.isCloseLoading();
+              return res;
+              // if (res.data && res.data.resultCode) {
+              //   let code = res.data.resultCode;
+              //   return res;
+              // }
+            },
+            (error) => {
+              this.isShowLoading = false;
+              this.loadingCount = 0;
+              return Promise.reject(error);
+            }
+          );
+        },
+        watch: {
+          $route: function (to, from) {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+          },
+        },
+      });
+    </script>
+
+    <style>
+      .el-form-item.is-error .el-input__inner,
+      .el-form-item.is-error .el-input__inner:focus,
+      .el-form-item.is-error .el-textarea__inner,
+      .el-form-item.is-error .el-textarea__inner:focus,
+      .el-message-box__input input.invalid,
+      .el-message-box__input input.invalid:focus {
+        border-color: #dcdfe6;
+      }
+      #app {
+        width: 100%;
+        height: 100%;
+        font-size: 0.26rem;
+        position: relative;
+        /* background: black; */
+      }
+      .van-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 666;
+        color: #e32b31;
+        font-size: 0;
+
+        vertical-align: middle;
+      }
+      .van-cell {
+        /* font-size: 0.26rem; */
+      }
+      .pickdate .van-calendar__header-title {
+        font-size: 0.28rem;
+      }
+      .van-calendar__header-subtitle {
+        font-size: 0.24rem;
+      }
+      .van-calendar__header-subtitle,
+      .van-calendar__header-title,
+      .van-calendar__month-title {
+        height: 0.44rem;
+        font-weight: 500;
+        line-height: 0.44rem;
+        text-align: center;
+      }
+      .van-calendar__weekday {
+        font-size: 0.24rem;
+      }
+      .van-calendar__day {
+        font-size: 0.24rem;
+      }
+      .van-calendar__month-title {
+        font-size: 0.24rem;
+      }
+      .pickdate .van-calendar__confirm {
+        height: 0.6rem;
+        margin: 0.07rem 0;
+      }
+      .van-button--normal {
+        font-size: 0.28rem;
+        font-weight: bold;
+      }
+      header {
+        height: 4.8rem;
+      }
+      .FillOutForm .van-cell {
+        font-size: 0.26rem;
+        padding: 0.16rem;
+        box-sizing: border-box;
+        line-height: 0.38rem;
+      }
+      .FillOutForm .van-field__label {
+        font-weight: bold;
+      }
+      .FillOutForm .van-field__error-message {
+        font-size: 0.22rem;
+      }
+      .FillOutForm .van-button {
+        height: 0.6rem;
+        font-weight: bold;
+      }
+      .timeperiod {
+        width: 100%;
+        height: 1.2rem;
+        background: #e32b31;
+        margin-bottom: 1px;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .grey {
+        background: #dfdfdf;
+      }
+      .FillOutForm .van-button--info {
+        background-color: #e32b31;
+        border: 1px solid #e32b31;
+      }
+      .van-overlay {
+        background: white;
+        opacity: 0.5;
+      }
+      .van-toast {
+        background: none;
+      }
+      .van-toast__loading {
+        color: #e32b31;
+      }
+      .van-loading__spinner {
+        height: 0.5rem;
+        width: 0.5rem;
+      }
+      .my-swipe .van-swipe-item {
+        /* color: #fff;
+        font-size: 20px;
+        line-height: 150px;
+        text-align: center;
+        background-color: #39a9ed; */
+      }
+    </style>
+  </body>
+</html>

@@ -2,21 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <!-- <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
-    /> -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
     <title>MZ JJ VIP Private Sale SS2020</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/vant@2.9/lib/index.css"
     />
-    <link href="http://www.mzjj.co.kr/image/catalog/xmzjj_logo_300x300.jpg.pagespeed.ic.NmvTA0QDqo.webp" rel="icon"/>
+    <link
+      href="http://www.mzjj.co.kr/image/catalog/xmzjj_logo_300x300.jpg.pagespeed.ic.NmvTA0QDqo.webp"
+      rel="icon"
+    />
     <link rel="stylesheet" href="./base.css" />
+ 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vant@2.9/lib/vant.min.js"></script>
@@ -38,7 +38,7 @@
       </van-overlay>
       <div style="height: 100%;">
         <div
-        v-show="ishome"
+          v-if="ishome"
           style="width: 100%; height: 3.6rem; position: absolute; top: 0;"
         >
           <img
@@ -47,15 +47,30 @@
             alt=""
           />
         </div>
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
+
+        <router-view></router-view>
       </div>
     </div>
     <template id="homepage">
-      <div class="homepage" style="width: 100%; height: 100%;position: relative;">
+      <div
+        class="homepage"
+        style="width: 100%; height: 100%; position: relative;"
+      >
         <img src="./pic/home.jpg" style="width: 100%; height: 100%;" alt="" />
-        <img @click="goto" src="./pic/booknow.png" style="width: 1.98rem;height: 0.8rem; position:absolute;top:70%;left:50%;z-index: 1000;transform: translateX(-50%);" alt="">
+        <img
+          @click="goto"
+          src="./pic/booknow.png"
+          style="
+            width: 1.98rem;
+            height: 0.8rem;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            z-index: 1000;
+            transform: translateX(-50%);
+          "
+          alt=""
+        />
       </div>
     </template>
     <template id="pickdate">
@@ -137,13 +152,13 @@
             alt=""
           />
         </div>
-        <ul style="margin: 0 auto; width: 5.3rem; margin-bottom: 0.7rem;">
+        <ul style="margin: 0 auto; width: 5.3rem;">
           <li
             v-for="(item,idx) in timeline"
             :key="idx"
-            @click="pickPeriod(item.book_status,item.set_id)"
+            @click="pickPeriod(item.book_status,idx,item.pick,item.set_id)"
             class="timeperiod"
-            :class="{grey:item.book_status}"
+            :class="{grey:item.book_status,pickone:!item.book_status && item.pick}"
           >
             <p>
               <span>{{item.time_start}}</span>
@@ -152,10 +167,28 @@
             </p>
           </li>
         </ul>
+
+        <div style="margin: 0.4rem auto 0.6rem; width: 5.3rem;">
+          <p
+            style="
+              width: 5.3rem;
+              height: 0.6rem;
+              line-height: 0.6rem;
+              text-align: center;
+              color: #e32b31;
+            "
+          >
+            {{reminder}}
+          </p>
+          <van-button round block type="info" @click="NextTOform">
+            Next
+          </van-button>
+        </div>
         <p
           style="
             margin: 0 auto;
             width: 5.7rem;
+
             border-bottom: 1px solid #bcbcbc;
           "
         ></p>
@@ -304,9 +337,14 @@
           <p style="font-size: 0.3rem; color: #6b6b6b; margin-bottom: 0.8rem;">
             successful appointment!
           </p>
-          <van-button round block type="info" @click="gohome">
-            Confirm
-          </van-button>
+          <a
+            style="display: block; width: 100%;"
+            href="http://www.mzjj.co.kr/privatesale/book.html#/homepage"
+          >
+            <van-button round block type="info">
+              Confirm
+            </van-button>
+          </a>
         </div>
 
         <p
@@ -360,9 +398,6 @@
         "November",
         "December",
       ];
-
-      //  let enUS= require('vant/lib/locale/lang/en-US') ;
-      //   console.log(enUS);
       const enjs = {
         name: "Name",
         tel: "Phone",
@@ -454,7 +489,7 @@
           maxWidth = maxWidth || 540;
           width > maxWidth && (width = maxWidth);
           var rem = (width * 100) / designWidth;
-          console.log(rem);
+          // console.log(rem);
 
           remStyle.innerHTML = "html{font-size:" + rem + "px !important;}";
         }
@@ -514,6 +549,8 @@
             minDate: new Date(2020, 07, 05),
             maxDate: new Date(2020, 07, 11),
             timeline: [],
+            set_id: "",
+            reminder: "",
             // currentDate: new Date(),
           };
         },
@@ -536,21 +573,44 @@
                 }
               )
               .then((res) => {
-                console.log(res);
-                // resolve(res);
                 this.timeline = res.data.data;
+                this.timeline.forEach((item) => {
+                  item.pick = false;
+                });
+                this.set_id = "";
+                this.reminder = "";
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
               })
               .catch((err) => {
                 // console.log(err);
               });
           },
-          pickPeriod(isok, idx) {
-            // console.log(isok);
-            if (!isok) {
+          NextTOform() {
+            this.reminder = "";
+            if (this.set_id) {
               this.$router.push({
                 name: "FillOutForm",
-                query: { set_id: idx },
+                query: { set_id: this.set_id },
               });
+            } else {
+              this.reminder = "Please choose";
+            }
+          },
+          pickPeriod(isok, idx, ispick, set_id) {
+            // console.log(isok);
+            if (!isok) {
+              this.timeline.forEach((item) => {
+                item.pick = false;
+              });
+              let a = this.timeline[idx];
+              a.pick = !ispick;
+              this.$set(this.timeline, idx, a);
+              if (a.pick) {
+                this.set_id = set_id;
+              } else {
+                this.set_id = "";
+              }
             } else {
             }
           },
@@ -595,11 +655,10 @@
         },
         mounted() {},
         methods: {
-          gohome(){
-            window.location.href="http://www.mzjj.co.kr/vueHtml/vuehtml.html#/homepage";
+          gohome() {
+            // window.location.href="http://www.mzjj.co.kr/vueHtml/vuehtml.html#/homepage";
           },
           reminder(value, rule) {
-            console.log(1);
             if (!value) {
               return "Please enter";
             } else return "Email Format is incorrect";
@@ -620,8 +679,6 @@
           },
           secSumbit(values) {
             let obj = Object.assign({ set_id: this.set_id }, values);
-            console.log(obj);
-
             axios
               .post(`${baseurl}?route=rob/book/addBook`, Qs.stringify(obj))
               .then((res) => {
@@ -635,7 +692,7 @@
           onSubmit(values) {
             this.errorMsg = "";
             //  let a=  this.$refs.checkbox.validateAll();
-            console.log(values);
+
             axios
               .post(
                 `${baseurl}?route=rob/book/checkTel`,
@@ -656,6 +713,14 @@
         template: "#homepage",
         data: function () {
           return {};
+        },
+        beforeRouteLeave(to, from, next) {
+          // console.log(to, from);
+          if (to.name == "FillOutForm") {
+            next(false);
+          } else {
+            next();
+          }
         },
         methods: {
           goto() {
@@ -709,8 +774,6 @@
         //  ]
         // }
       ];
-      // console.log(pickdater);
-
       var router = new VueRouter({
         // mode:'history',
         routes,
@@ -727,9 +790,12 @@
         computed: {
           ishome: function () {
             // console.log(this.$route);
-            if(this.$route.name=="pickdate" || this.$route.name=="FillOutForm"){
-                return 1;
-            }else{
+            if (
+              this.$route.name == "pickdate" ||
+              this.$route.name == "FillOutForm"
+            ) {
+              return 1;
+            } else {
               return 0;
             }
           },
@@ -786,16 +852,6 @@
           },
         },
       });
-
-      // function formatter_upload_img(value) {
-      //   console.log("########formatter_upload_img");
-      //   console.log(value);
-      //   // console.log(scope.row)
-      //   //return row.date == "2016-05-04" ? '男' : row.sex == 0 ? '女' : '未知';
-      //   //格式化是针对表格内容即使data数据
-      //   // var newDate = row.date== "" ? "-" : row.date.replace(/-/g,"/")
-      //   // return newDate
-      // }
     </script>
 
     <style>
@@ -814,14 +870,25 @@
         z-index: 666;
         color: #e32b31;
         font-size: 0;
-
         vertical-align: middle;
       }
       .van-cell {
         /* font-size: 0.26rem; */
       }
+      .pickdate .pickone {
+        border-color: #9c0c10;
+        /* color: #9c0c10; */
+      }
       .pickdate .van-calendar__header-title {
         font-size: 0.28rem;
+      }
+      .pickdate .van-button--info {
+        background-color: #e32b31;
+        border: 1px solid #e32b31;
+      }
+      .pickdate .van-button {
+        height: 0.6rem;
+        font-weight: bold;
       }
       .van-calendar__header-subtitle {
         font-size: 0.24rem;
@@ -871,7 +938,9 @@
         font-weight: bold;
       }
       .timeperiod {
+        border-radius: 10px;
         width: 100%;
+        border: 3px solid white;
         height: 1.2rem;
         background: #e32b31;
         margin-bottom: 1px;
